@@ -27,11 +27,13 @@ pub struct SoapyConfig {
     pub gain: Gain,
     /// Enable bias tee for powering external LNA (default: false)
     pub bias_tee: bool,
+    /// Bandwidth in Hz
+    pub bandwidth: f64,
 }
 
 impl SoapyConfig {
     /// Create a new SoapySDR configuration with specified parameters
-    pub fn new(args: String, center_freq: f64, sample_rate: f64) -> Self {
+    pub fn new(args: String, center_freq: f64, sample_rate: f64, bandwidth: f64) -> Self {
         Self {
             args,
             center_freq,
@@ -39,6 +41,7 @@ impl SoapyConfig {
             channel: 0,
             gain: Gain::Auto,
             bias_tee: false,
+            bandwidth,
         }
     }
 }
@@ -59,6 +62,7 @@ impl SoapySdrReader {
 
         device.set_frequency(Direction::Rx, config.channel, config.center_freq, ())?;
         device.set_sample_rate(Direction::Rx, config.channel, config.sample_rate)?;
+        device.set_bandwidth(Direction::Rx, config.channel, config.bandwidth)?;
         let supported = device.list_gains(Direction::Rx, config.channel)?;
 
         match &config.gain {
@@ -169,6 +173,7 @@ impl AsyncSoapySdrReader {
 
                 device.set_frequency(Direction::Rx, cfg.channel, cfg.center_freq, ())?;
                 device.set_sample_rate(Direction::Rx, cfg.channel, cfg.sample_rate)?;
+                device.set_bandwidth(Direction::Rx, cfg.channel, cfg.bandwidth)?;
 
                 let supported = device.list_gains(Direction::Rx, cfg.channel)?;
 

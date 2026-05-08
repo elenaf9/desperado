@@ -533,6 +533,7 @@ impl std::str::FromStr for DeviceConfig {
                 // Parse query parameters
                 let mut center_freq: Option<f64> = None;
                 let mut sample_rate: Option<f64> = None;
+                let mut bandwidth: Option<f64> = None;
                 let mut gain = Gain::Auto;
                 let channel = 0;
                 let mut bias_tee = false;
@@ -552,6 +553,9 @@ impl std::str::FromStr for DeviceConfig {
                         "rate" | "sample_rate" => {
                             sample_rate = Some(parse_si_value(kv[1])?);
                         }
+                        "bw" | "bandwidth" => {
+                            bandwidth = Some(parse_si_value(kv[1])?);
+                        }
                         "gain" => {
                             gain = Gain::parse(kv[1])?;
                         }
@@ -566,6 +570,8 @@ impl std::str::FromStr for DeviceConfig {
                     .ok_or_else(|| Error::other("Missing freq parameter".to_string()))?;
                 let sample_rate = sample_rate
                     .ok_or_else(|| Error::other("Missing rate parameter".to_string()))?;
+                let bandwidth = bandwidth
+                    .ok_or_else(|| Error::other("Missing bandwidth parameter".to_string()))?;
 
                 Ok(DeviceConfig::Soapy(soapy::SoapyConfig {
                     args,
@@ -573,6 +579,7 @@ impl std::str::FromStr for DeviceConfig {
                     sample_rate,
                     channel,
                     gain,
+                    bandwidth,
                     bias_tee,
                 }))
             }
@@ -1037,6 +1044,7 @@ impl IqSource {
         center_freq: u32,
         sample_rate: u32,
         gain: Gain,
+        bandwidth: u32
     ) -> error::Result<Self> {
         let config = soapy::SoapyConfig {
             args: args.to_string(),
@@ -1044,6 +1052,7 @@ impl IqSource {
             sample_rate: sample_rate as f64,
             channel,
             gain,
+            bandwidth: bandwidth as f64,
             bias_tee: false,
         };
         let source = soapy::SoapySdrReader::new(&config)?;
@@ -1269,6 +1278,7 @@ impl IqAsyncSource {
         center_freq: u32,
         sample_rate: u32,
         gain: Gain,
+        bandwidth: u32,
     ) -> error::Result<Self> {
         let config = soapy::SoapyConfig {
             args: args.to_string(),
@@ -1276,6 +1286,7 @@ impl IqAsyncSource {
             sample_rate: sample_rate as f64,
             channel,
             gain,
+            bandwidth: bandwidth as f64,
             bias_tee: false,
         };
         let async_reader = soapy::AsyncSoapySdrReader::new(&config)?;
