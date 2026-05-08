@@ -138,8 +138,8 @@ impl Iterator for SoapySdrReader {
             .iter()
             .map(|c| {
                 Complex::new(
-                    c.re as f32 / (1 << 15) as f32,
-                    c.im as f32 / (1 << 15) as f32,
+                    c.re as f32 / (1 << 11) as f32,
+                    c.im as f32 / (1 << 11) as f32,
                 )
             })
             .collect();
@@ -236,8 +236,8 @@ impl AsyncSoapySdrReader {
                                     .iter()
                                     .map(|c| {
                                         Complex::new(
-                                            c.re as f32 / (1 << 15) as f32,
-                                            c.im as f32 / (1 << 15) as f32,
+                                            c.re as f32 / (1 << 11) as f32,
+                                            c.im as f32 / (1 << 11) as f32,
                                         )
                                     })
                                     .collect();
