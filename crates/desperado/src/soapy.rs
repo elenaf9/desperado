@@ -29,11 +29,13 @@ pub struct SoapyConfig {
     pub bias_tee: bool,
     /// Bandwidth in Hz
     pub bandwidth: f64,
+    /// Stream arguments (e.g, "buflen=4096")
+    pub rx_stream_args: String,
 }
 
 impl SoapyConfig {
     /// Create a new SoapySDR configuration with specified parameters
-    pub fn new(args: String, center_freq: f64, sample_rate: f64, bandwidth: f64) -> Self {
+    pub fn new(args: String, center_freq: f64, sample_rate: f64, bandwidth: f64, rx_stream_args: String) -> Self {
         Self {
             args,
             center_freq,
@@ -42,6 +44,7 @@ impl SoapyConfig {
             gain: Gain::Auto,
             bias_tee: false,
             bandwidth,
+            rx_stream_args,
         }
     }
 }
@@ -106,7 +109,7 @@ impl SoapySdrReader {
             let _ = device.write_setting("biastee", "true");
         }
 
-        let mut stream = device.rx_stream::<Complex<i16>>(&[config.channel])?;
+        let mut stream = device.rx_stream_args::<Complex<i16>, _>(&[config.channel], config.rx_stream_args.as_str())?;
         let mtu = stream.mtu()?;
         stream.activate(None)?;
 
@@ -218,7 +221,8 @@ impl AsyncSoapySdrReader {
                     let _ = device.write_setting("biastee", "true");
                 }
 
-                let mut stream = device.rx_stream::<Complex<i16>>(&[cfg.channel])?;
+                let mut stream = device.rx_stream_args::<Complex<i16>, _>(&[cfg.channel] , cfg.rx_stream_args.as_str())?;
+
                 stream.activate(None)?;
 
                 Ok((device, stream))
