@@ -127,7 +127,7 @@ impl Iterator for SoapySdrReader {
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.pos >= self.end {
-            match self.stream.read(&mut [&mut self.buf], 5_000_000) {
+            match self.stream.read(&mut [&mut self.buf], 3500) {
                 Ok(len) => {
                     if len == 0 {
                         return None; // End of stream
