@@ -232,7 +232,7 @@ impl AsyncSoapySdrReader {
                 Ok((_device, mut stream)) => {
                     let _ = tx_init.send(Ok(()));
                     let mtu = stream.mtu().unwrap_or(16384);
-                    let mut buffer = vec![Complex::new(0, 0); mtu];
+                    let mut buffer = vec![Complex::new(0, 0); mtu / size_of::<Complex<i16>>()];
 
                     loop {
                         match stream.read(&mut [&mut buffer], 5_000_000) {
