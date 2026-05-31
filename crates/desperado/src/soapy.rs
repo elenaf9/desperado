@@ -130,7 +130,7 @@ impl SoapySdrReader {
 }
 
 impl Iterator for SoapySdrReader {
-    type Item = error::Result<Vec<Complex<f32>>>;
+    type Item = error::Result<Vec<Complex<f64>>>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.pos >= self.end {
@@ -148,12 +148,12 @@ impl Iterator for SoapySdrReader {
             }
         }
 
-        let samples: Vec<Complex<f32>> = self.buf[self.pos..self.end]
+        let samples: Vec<Complex<f64>> = self.buf[self.pos..self.end]
             .iter()
             .map(|c| {
                 Complex::new(
-                    c.re as f32 / (1 << 11) as f32,
-                    c.im as f32 / (1 << 11) as f32,
+                    c.re as f64 / (1 << 11) as f64,
+                    c.im as f64 / (1 << 11) as f64,
                 )
             })
             .collect();
@@ -167,13 +167,13 @@ impl Iterator for SoapySdrReader {
  * Asynchronous SoapySDR I/Q Reader
  */
 pub struct AsyncSoapySdrReader {
-    rx: tokio::sync::mpsc::Receiver<error::Result<Vec<Complex<f32>>>>,
+    rx: tokio::sync::mpsc::Receiver<error::Result<Vec<Complex<f64>>>>,
     _handle: std::thread::JoinHandle<()>,
 }
 
 impl AsyncSoapySdrReader {
     pub fn new(config: &SoapyConfig) -> error::Result<Self> {
-        let (tx, rx) = tokio::sync::mpsc::channel::<error::Result<Vec<Complex<f32>>>>(32);
+        let (tx, rx) = tokio::sync::mpsc::channel::<error::Result<Vec<Complex<f64>>>>(32);
         let (tx_init, rx_init) = std::sync::mpsc::channel::<error::Result<()>>();
         let cfg = config.clone();
 
@@ -251,12 +251,12 @@ impl AsyncSoapySdrReader {
                                     let _ = tx.blocking_send(Ok(Vec::new()));
                                     return;
                                 }
-                                let samples: Vec<Complex<f32>> = buffer[..len]
+                                let samples: Vec<Complex<f64>> = buffer[..len]
                                     .iter()
                                     .map(|c| {
                                         Complex::new(
-                                            c.re as f32 / (1 << 11) as f32,
-                                            c.im as f32 / (1 << 11) as f32,
+                                            c.re as f64 / (1 << 11) as f64,
+                                            c.im as f64 / (1 << 11) as f64,
                                         )
                                     })
                                     .collect();
@@ -290,7 +290,7 @@ impl AsyncSoapySdrReader {
 }
 
 impl Stream for AsyncSoapySdrReader {
-    type Item = error::Result<Vec<Complex<f32>>>;
+    type Item = error::Result<Vec<Complex<f64>>>;
 
     fn poll_next(
         mut self: std::pin::Pin<&mut Self>,

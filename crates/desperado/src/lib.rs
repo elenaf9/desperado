@@ -872,23 +872,24 @@ pub enum IqSource {
 }
 
 impl Iterator for IqSource {
-    type Item = error::Result<Vec<Complex<f32>>>;
+    type Item = error::Result<Vec<Complex<f64>>>;
 
     fn next(&mut self) -> Option<Self::Item> {
         match self {
-            IqSource::IqFile(source) => source.next(),
-            IqSource::IqStdin(source) => source.next(),
-            IqSource::IqTcp(source) => source.next(),
-            #[cfg(feature = "pluto")]
-            IqSource::PlutoSdr(source) => source.next(),
-            #[cfg(feature = "rtlsdr")]
-            IqSource::RtlSdr(source) => source.next(),
+            // IqSource::IqFile(source) => source.next(),
+            // IqSource::IqStdin(source) => source.next(),
+            // IqSource::IqTcp(source) => source.next(),
+            // #[cfg(feature = "pluto")]
+            // IqSource::PlutoSdr(source) => source.next(),
+            // #[cfg(feature = "rtlsdr")]
+            // IqSource::RtlSdr(source) => source.next(),
             #[cfg(feature = "soapy")]
             IqSource::SoapySdr(source) => source.next(),
-            #[cfg(feature = "airspy")]
-            IqSource::Airspy(source) => source.next(),
-            #[cfg(feature = "hackrf")]
-            IqSource::HackRf(source) => source.next(),
+            // #[cfg(feature = "airspy")]
+            // IqSource::Airspy(source) => source.next(),
+            // #[cfg(feature = "hackrf")]
+            // IqSource::HackRf(source) => source.next(),
+            _ => unimplemented!()
         }
     }
 }
@@ -1371,23 +1372,24 @@ impl IqAsyncSource {
 }
 
 impl Stream for IqAsyncSource {
-    type Item = error::Result<Vec<Complex<f32>>>;
+    type Item = error::Result<Vec<Complex<f64>>>;
 
     fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
         match self.get_mut() {
-            IqAsyncSource::IqAsyncFile(source) => Pin::new(source).poll_next(cx),
-            IqAsyncSource::IqAsyncStdin(source) => Pin::new(source).poll_next(cx),
-            IqAsyncSource::IqAsyncTcp(source) => Pin::new(source).poll_next(cx),
-            #[cfg(feature = "pluto")]
-            IqAsyncSource::PlutoSdr(source) => Pin::new(source).poll_next(cx),
-            #[cfg(feature = "rtlsdr")]
-            IqAsyncSource::RtlSdr(source) => Pin::new(source).poll_next(cx),
+            // IqAsyncSource::IqAsyncFile(source) => Pin::new(source).poll_next(cx),
+            // IqAsyncSource::IqAsyncStdin(source) => Pin::new(source).poll_next(cx),
+            // IqAsyncSource::IqAsyncTcp(source) => Pin::new(source).poll_next(cx),
+            // #[cfg(feature = "pluto")]
+            // IqAsyncSource::PlutoSdr(source) => Pin::new(source).poll_next(cx),
+            // #[cfg(feature = "rtlsdr")]
+            // IqAsyncSource::RtlSdr(source) => Pin::new(source).poll_next(cx),
             #[cfg(feature = "soapy")]
             IqAsyncSource::SoapySdr(source) => Pin::new(source).poll_next(cx),
-            #[cfg(feature = "airspy")]
-            IqAsyncSource::Airspy(source) => Pin::new(source).poll_next(cx),
-            #[cfg(feature = "hackrf")]
-            IqAsyncSource::HackRf(source) => Pin::new(source).poll_next(cx),
+            // #[cfg(feature = "airspy")]
+            // IqAsyncSource::Airspy(source) => Pin::new(source).poll_next(cx),
+            // #[cfg(feature = "hackrf")]
+            // IqAsyncSource::HackRf(source) => Pin::new(source).poll_next(cx),
+            _ => unimplemented!()
         }
     }
 }
