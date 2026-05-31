@@ -573,7 +573,6 @@ impl std::str::FromStr for DeviceConfig {
                 let bandwidth = bandwidth
                     .ok_or_else(|| Error::other("Missing bandwidth parameter".to_string()))?;
 
-
                 Ok(DeviceConfig::Soapy(soapy::SoapyConfig {
                     args,
                     center_freq,
@@ -582,7 +581,7 @@ impl std::str::FromStr for DeviceConfig {
                     gain,
                     bandwidth,
                     bias_tee,
-                    rx_stream_args: String::new()
+                    rx_stream_args: String::new(),
                 }))
             }
             #[cfg(feature = "pluto")]
@@ -1057,7 +1056,7 @@ impl IqSource {
             gain,
             bandwidth: bandwidth as f64,
             bias_tee: false,
-            rx_stream_args: rx_stream_args.to_string()
+            rx_stream_args: rx_stream_args.to_string(),
         };
         let source = soapy::SoapySdrReader::new(&config)?;
         Ok(IqSource::SoapySdr(source))
@@ -1293,7 +1292,7 @@ impl IqAsyncSource {
             gain,
             bandwidth: bandwidth as f64,
             bias_tee: false,
-            rx_stream_args: rx_stream_args.to_string()
+            rx_stream_args: rx_stream_args.to_string(),
         };
         let async_reader = soapy::AsyncSoapySdrReader::new(&config)?;
         Ok(IqAsyncSource::SoapySdr(async_reader))
